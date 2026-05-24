@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpeechBlitz — Tantangan Berbicara | Pelatih Berbicara Publik AI</title>
+  <meta name="description" content="SpeechBlitz adalah pelatih berbicara publik berbasis AI yang menganalisis ucapan Anda secara real-time, memberikan masukan tentang kelancaran, tata bahasa, nada, emosi, dan relevansi." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            mint: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7' },
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            slate: { 800: '#1e293b', 700: '#334155', 600: '#475569', 500: '#64748b', 400: '#94a3b8', 300: '#cbd5e1', 200: '#e2e8f0', 100: '#f1f5f9' },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Outfit', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-mint-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-200 antialiased min-h-screen flex pb-20 md:pb-0 transition-colors duration-300">
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SIDEBAR                                                        -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <aside id="sidebar" class="sidebar">
+    <!-- Logo -->
+    <div class="px-6 pt-7 pb-5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+          <i data-lucide="mic" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-display font-bold text-lg leading-tight tracking-tight text-slate-800 dark:text-slate-100">SpeechBlitz</h1>
+          <p class="text-[11px] font-medium text-emerald-600 dark:text-emerald-500 tracking-widest uppercase">Tantangan Berbicara</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="mx-5 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent"></div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 pt-6 space-y-1.5">
+      <button id="nav-practice" class="nav-item active" onclick="switchView('practice')">
+        <i data-lucide="swords" class="w-[18px] h-[18px]"></i>
+        <span>Arena Latihan</span>
+      </button>
+      <button id="nav-stats" class="nav-item" onclick="switchView('stats')">
+        <i data-lucide="bar-chart-3" class="w-[18px] h-[18px]"></i>
+        <span>Statistik Saya</span>
+      </button>
+      <button id="nav-history" class="nav-item" onclick="switchView('history')">
+        <i data-lucide="history" class="w-[18px] h-[18px]"></i>
+        <span>Riwayat Sesi</span>
+      </button>
+    </nav>
+
+    <!-- Coach Persona Selector (Inline Segmented Buttons) -->
+    <div class="px-4 pb-16">
+      <div class="mb-3 px-1">
+        <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Karakter Pelatih</label>
+      </div>
+      <div class="space-y-1.5" id="coach-selector-container">
+        <select id="coach-persona" class="hidden">
+          <option value="professional" selected>🎯 Profesional</option>
+          <option value="roaster">🔥 Tukang Roasting</option>
+          <option value="therapist">🧘 Terapis</option>
+        </select>
+        
+        <button type="button" data-coach="professional" class="coach-select-btn active group relative flex items-center gap-3 w-full bg-white/90 border border-slate-200/80 text-slate-700 text-xs font-semibold py-2.5 px-4 rounded-xl shadow-sm hover:shadow transition-all">
+          <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 active-glow transition-opacity"></div>
+          <span class="text-sm">🎯</span>
+          <div class="text-left">
+            <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">Profesional</p>
+          </div>
+        </button>
+
+        <button type="button" data-coach="roaster" class="coach-select-btn group relative flex items-center gap-3 w-full bg-white/40 border border-slate-200/40 text-slate-500 text-xs font-semibold py-2.5 px-4 rounded-xl hover:bg-white/80 transition-all">
+          <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500/5 to-rose-500/5 opacity-0 active-glow transition-opacity"></div>
+          <span class="text-sm">🔥</span>
+          <div class="text-left">
+            <p class="font-bold text-slate-700 dark:text-slate-300 text-xs font-semibold">Tukang Roasting</p>
+          </div>
+        </button>
+
+        <button type="button" data-coach="therapist" class="coach-select-btn group relative flex items-center gap-3 w-full bg-white/40 border border-slate-200/40 text-slate-500 text-xs font-semibold py-2.5 px-4 rounded-xl hover:bg-white/80 transition-all">
+          <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-violet-500/5 to-purple-500/5 opacity-0 active-glow transition-opacity"></div>
+          <span class="text-sm">🧘</span>
+          <div class="text-left">
+            <p class="font-bold text-slate-700 dark:text-slate-300 text-xs font-semibold">Terapis</p>
+          </div>
+        </button>
+      </div>
+      <p id="persona-desc" class="text-[11px] text-slate-400 dark:text-slate-500 mt-2.5 leading-relaxed px-1">Umpan balik yang jelas dan dapat ditindaklanjuti untuk perbaikan berkelanjutan.</p>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- MAIN WORKSPACE                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <main class="flex-1 flex flex-col min-h-screen overflow-y-auto">
+
+    <!-- Top Bar -->
+    <header class="flex items-center justify-between px-8 py-5 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/40 dark:bg-slate-950/40 backdrop-blur-xl sticky top-0 z-30 transition-colors duration-300">
+      <div>
+        <h2 id="view-title" class="font-display font-bold text-xl text-slate-800 dark:text-slate-100 tracking-tight">Arena Latihan</h2>
+        <p id="view-subtitle" class="text-sm text-slate-400 dark:text-slate-500 mt-0.5">Berbicara dengan percaya diri. Dapatkan umpan balik AI instan.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Dark Mode Toggle -->
+        <button id="dark-mode-btn" class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shadow-sm hover:shadow hover:scale-105 active:scale-95 transition-all text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50" aria-label="Toggle Dark Mode" onclick="toggleDarkMode()">
+          <i data-lucide="sun" id="sun-icon" class="w-[18px] h-[18px] hidden"></i>
+          <i data-lucide="moon" id="moon-icon" class="w-[18px] h-[18px]"></i>
+        </button>
+
+        <!-- Hamburger Menu (Mobile Only) -->
+        <button id="menu-toggle-btn" class="md:hidden w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shadow-sm hover:shadow active:scale-95 transition-all text-slate-600 dark:text-slate-300 focus:outline-none" aria-label="Toggle Sidebar" onclick="toggleSidebar()">
+          <i data-lucide="menu" id="menu-icon" class="w-5 h-5"></i>
+        </button>
+        <!-- Theme Selector -->
+        <div class="relative group custom-dropdown-container" data-select-id="topic-theme" data-color="emerald">
+          <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+          <select id="topic-theme" class="hidden">
+            <option value="Semua">Semua Tema</option>
+            <option value="Teknologi">Teknologi</option>
+            <option value="Pendidikan">Pendidikan</option>
+            <option value="Sosial">Sosial & Budaya</option>
+            <option value="Pribadi">Karir & Pribadi</option>
+            <option value="Filsafat">Filsafat & Etika</option>
+            <option value="Kesehatan">Kesehatan & Pola Hidup</option>
+            <option value="Lingkungan">Lingkungan & Ekologi</option>
+            <option value="Ekonomi">Ekonomi & Keuangan</option>
+            <option value="Seni">Seni & Pop Culture</option>
+          </select>
+          <button type="button" class="custom-dropdown-trigger relative flex items-center justify-between min-w-[140px] bg-white/80 backdrop-blur-md border border-emerald-200/60 text-slate-700 text-[13px] font-semibold py-2.5 pl-4 pr-3.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-sm hover:shadow-md transition-all">
+            <span class="custom-dropdown-text pointer-events-none">Semua Tema</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-emerald-600 group-hover:text-emerald-700 transition-colors pointer-events-none ml-2"></i>
+          </button>
+          <div class="custom-dropdown-menu absolute z-50 left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-emerald-100 rounded-2xl shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
+            <ul class="py-1.5 px-1.5 space-y-0.5 custom-dropdown-list">
+              <!-- Populated by JS -->
+            </ul>
+          </div>
+        </div>
+
+        <button id="topic-btn" class="topic-btn group">
+          <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500 group-hover:text-white transition-colors"></i>
+          <span>Topik Acak</span>
+        </button>
+
+        <div class="w-px h-6 bg-slate-200 mx-1"></div>
+
+        <!-- Timer Selector -->
+        <div class="relative group custom-dropdown-container" data-select-id="timer-limit" data-color="amber">
+          <div class="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
+          <select id="timer-limit" class="hidden">
+            <option value="0">⏳ Bebas (Tanpa Batas)</option>
+            <option value="30">⏳ 30 Detik</option>
+            <option value="60">⏳ 1 Menit</option>
+            <option value="120">⏳ 2 Menit</option>
+          </select>
+          <button type="button" class="custom-dropdown-trigger relative flex items-center justify-between min-w-[180px] bg-white/80 backdrop-blur-md border border-amber-200/60 text-slate-700 text-[13px] font-semibold py-2.5 pl-4 pr-3.5 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/50 shadow-sm hover:shadow-md transition-all">
+            <span class="custom-dropdown-text pointer-events-none">⏳ Bebas (Tanpa Batas)</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-amber-600 group-hover:text-amber-700 transition-colors pointer-events-none ml-2"></i>
+          </button>
+          <div class="custom-dropdown-menu absolute z-50 right-0 mt-2 w-[180px] bg-white/95 backdrop-blur-xl border border-amber-100 rounded-2xl shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
+            <ul class="py-1.5 px-1.5 space-y-0.5 custom-dropdown-list">
+              <!-- Populated by JS -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VIEW: PRACTICE ARENA                     -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="view-practice" class="flex-1 flex flex-col items-center justify-center px-8 py-10 transition-all duration-500">
+
+      <!-- Topic Display -->
+      <div id="topic-card" class="topic-card hidden">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i>
+          <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Topik Anda</span>
+        </div>
+        <p id="topic-text" class="text-lg font-semibold text-slate-700 leading-relaxed"></p>
+      </div>
+
+      <!-- Microphone Button -->
+      <div class="relative mt-6 mb-8">
+        <!-- Pulse rings -->
+        <div id="pulse-ring-1" class="pulse-ring"></div>
+        <div id="pulse-ring-2" class="pulse-ring delay-500"></div>
+        <div id="pulse-ring-3" class="pulse-ring delay-1000"></div>
+
+        <button id="mic-btn" class="mic-btn disabled" disabled aria-label="Start or stop recording">
+          <i data-lucide="mic" id="mic-icon" class="w-10 h-10 text-white transition-transform duration-300"></i>
+          <i data-lucide="square" id="stop-icon" class="w-8 h-8 text-white hidden transition-transform duration-300"></i>
+        </button>
+      </div>
+
+      <!-- Status Text -->
+      <div class="text-center mb-6">
+        <p id="rec-status" class="text-sm font-medium text-amber-600 dark:text-amber-500 transition-all duration-300">💡 Pilih "Topik Acak" di atas terlebih dahulu</p>
+        <p id="rec-timer" class="font-display text-3xl font-bold text-emerald-600 mt-1 opacity-0 transition-all duration-500">00:00</p>
+      </div>
+
+      <!-- Live Stats Chips -->
+      <div id="live-stats" class="flex items-center gap-4 opacity-0 transition-all duration-500">
+        <div class="stat-chip">
+          <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span id="live-wpm">0</span> KPM
+        </div>
+        <div class="stat-chip">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-amber-500"></i>
+          <span id="live-fillers">0</span> Kata Pengisi
+        </div>
+        <div class="stat-chip">
+          <i data-lucide="volume-x" class="w-3.5 h-3.5 text-rose-500"></i>
+          <span id="live-pauses">0</span> Jeda
+        </div>
+      </div>
+
+      <!-- Live Waveform Visualizer -->
+      <div id="waveform-container" class="waveform-container mt-8 opacity-0 transition-all duration-700">
+        <canvas id="waveform-canvas" class="w-full h-full"></canvas>
+      </div>
+
+      <!-- Live Transcript -->
+      <div id="live-transcript-box" class="live-transcript-box mt-6 hidden">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Transkrip Langsung</span>
+        </div>
+        <p id="live-transcript" class="text-sm text-slate-600 leading-relaxed italic"></p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VIEW: DASHBOARD / RESULTS                -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="view-dashboard" class="hidden flex-1 px-8 py-10 overflow-y-auto">
+
+      <!-- Back Button for Historical View -->
+      <div id="dashboard-back-header" class="mb-6 hidden animate-slide-down">
+        <button class="flex items-center gap-2 text-[11px] font-bold text-slate-500 hover:text-slate-800 transition-all bg-white/70 hover:bg-white px-4 py-2 rounded-full border border-slate-200/60 shadow-sm hover:shadow" onclick="switchView('history')">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-slate-500"></i>
+          <span>KEMBALI KE RIWAYAT SESI</span>
+        </button>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="summary-card">
+          <div class="summary-icon bg-emerald-50 text-emerald-600">
+            <i data-lucide="timer" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Durasi</p>
+            <p id="result-duration" class="text-xl font-bold text-slate-800 mt-0.5">--:--</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon bg-blue-50 text-blue-600">
+            <i data-lucide="gauge" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">KPM (Kata/Menit)</p>
+            <p id="result-wpm" class="text-xl font-bold text-slate-800 mt-0.5">0</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon bg-amber-50 text-amber-600">
+            <i data-lucide="message-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Kata Pengisi</p>
+            <p id="result-fillers" class="text-xl font-bold text-slate-800 mt-0.5">0</p>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon bg-rose-50 text-rose-600">
+            <i data-lucide="volume-x" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Jeda Panjang</p>
+            <p id="result-pauses" class="text-xl font-bold text-slate-800 mt-0.5">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two Columns: Radar Chart + AI Feedback -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+        <!-- Radar Chart -->
+        <div class="dashboard-card">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="radar" class="w-5 h-5 text-emerald-500"></i>
+            <h3 class="font-display font-bold text-base text-slate-800">Radar Performa</h3>
+          </div>
+          <div class="relative w-full max-w-[320px] mx-auto aspect-square">
+            <canvas id="radar-chart"></canvas>
+          </div>
+          <!-- Score Legend -->
+          <div id="score-legend" class="grid grid-cols-5 gap-2 mt-5">
+            <div class="score-badge" data-metric="fluency">
+              <span class="text-lg font-bold text-emerald-600">--</span>
+              <span class="text-[10px] text-slate-400">Kelancaran</span>
+            </div>
+            <div class="score-badge" data-metric="grammar">
+              <span class="text-lg font-bold text-blue-600">--</span>
+              <span class="text-[10px] text-slate-400">Tata Bahasa</span>
+            </div>
+            <div class="score-badge" data-metric="pitch">
+              <span class="text-lg font-bold text-violet-600">--</span>
+              <span class="text-[10px] text-slate-400">Nada</span>
+            </div>
+            <div class="score-badge" data-metric="emotion">
+              <span class="text-lg font-bold text-rose-500">--</span>
+              <span class="text-[10px] text-slate-400">Emosi</span>
+            </div>
+            <div class="score-badge" data-metric="relevance">
+              <span class="text-lg font-bold text-amber-600">--</span>
+              <span class="text-[10px] text-slate-400">Relevansi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Feedback -->
+        <div class="dashboard-card">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="bot" class="w-5 h-5 text-emerald-500"></i>
+            <h3 class="font-display font-bold text-base text-slate-800">Umpan Balik Pelatih</h3>
+            <span id="coach-badge" class="ml-auto text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-wider">Profesional</span>
+          </div>
+          <div id="ai-feedback-container" class="relative min-h-[200px]">
+            <!-- Loading State (Shimmer Skeleton) -->
+            <div id="ai-loading" class="absolute inset-0 flex flex-col gap-5 p-2">
+              <!-- Summary Skeleton -->
+              <div class="space-y-2">
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-2">
+                  <div class="h-3.5 skeleton-shimmer rounded w-full"></div>
+                  <div class="h-3.5 skeleton-shimmer rounded w-11/12"></div>
+                  <div class="h-3.5 skeleton-shimmer rounded w-4/5"></div>
+                </div>
+              </div>
+              <!-- Strengths Skeleton -->
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg skeleton-shimmer flex-shrink-0"></div>
+                  <div class="h-3.5 skeleton-shimmer rounded w-1/4"></div>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="h-10 skeleton-shimmer rounded-lg w-full"></div>
+                  <div class="h-10 skeleton-shimmer rounded-lg w-full"></div>
+                </div>
+              </div>
+              <!-- Improvements Skeleton -->
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg skeleton-shimmer flex-shrink-0"></div>
+                  <div class="h-3.5 skeleton-shimmer rounded w-1/4"></div>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="h-10 skeleton-shimmer rounded-lg w-full"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Feedback Content -->
+            <div id="ai-feedback-content" class="hidden space-y-4">
+
+              <!-- Fallback Warning Alert -->
+              <div id="fallback-warning" class="hidden p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 text-amber-800 dark:text-amber-400 flex items-start gap-2.5">
+                <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 text-amber-600 dark:text-amber-400 flex-shrink-0"></i>
+                <div class="text-xs">
+                  <p class="font-bold">⚠️ Mode Simulasi (Offline)</p>
+                  <p class="mt-0.5 text-[11px] leading-relaxed opacity-90">Koneksi API AI (Gemini) terhambat (karena kuota habis atau konfigurasi kunci). Umpan balik di bawah menggunakan contoh standar simulasi lokal.</p>
+                </div>
+              </div>
+
+              <!-- Summary -->
+              <div id="feedback-summary-box" class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <p id="ai-feedback-text" class="text-sm text-slate-600 leading-relaxed"></p>
+              </div>
+
+              <!-- Strengths -->
+              <div id="feedback-strengths-box" class="hidden">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i></span>
+                  <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Kelebihan Anda</span>
+                </div>
+                <ul id="feedback-strengths-list" class="space-y-1.5"></ul>
+              </div>
+
+              <!-- Improvements -->
+              <div id="feedback-improvements-box" class="hidden">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/30 flex items-center justify-center text-amber-600 dark:text-amber-400"><i data-lucide="target" class="w-3.5 h-3.5"></i></span>
+                  <span class="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Yang Perlu Ditingkatkan</span>
+                </div>
+                <ul id="feedback-improvements-list" class="space-y-1.5"></ul>
+              </div>
+
+              <!-- Actionable Tips -->
+              <div id="feedback-tips-box" class="hidden">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400"><i data-lucide="lightbulb" class="w-3.5 h-3.5"></i></span>
+                  <span class="text-[11px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">Tips Latihan</span>
+                </div>
+                <ul id="feedback-tips-list" class="space-y-1.5"></ul>
+              </div>
+
+              <!-- Motivation -->
+              <div id="feedback-motivation-box" class="hidden p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-mint-100 border border-emerald-100 text-center">
+                <p id="feedback-motivation-text" class="text-sm font-medium text-emerald-700 dark:text-emerald-300 italic"></p>
+              </div>
+
+              <!-- Vocabulary Suggestions -->
+              <div id="vocab-section" class="mt-5 hidden">
+                <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Saran Kosakata</p>
+                <div id="vocab-list" class="flex flex-wrap gap-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio Player Panel -->
+      <div id="audio-player-container" class="audio-player-panel hidden">
+        <button id="audio-play-btn" class="audio-play-btn" onclick="toggleAudioPlayback()">
+          <i data-lucide="play" id="audio-play-icon" class="w-5 h-5 ml-0.5"></i>
+          <i data-lucide="pause" id="audio-pause-icon" class="w-5 h-5 hidden"></i>
+        </button>
+        <div class="audio-progress-container">
+          <input type="range" id="audio-scrubber" class="audio-scrubber" min="0" max="100" value="0" step="0.1" oninput="seekAudio(this.value)">
+          <div class="audio-time-display">
+            <span id="audio-current-time">00:00</span> / <span id="audio-total-time">00:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlighted Transcript -->
+      <div class="dashboard-card mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="file-text" class="w-5 h-5 text-emerald-500"></i>
+            <h3 class="font-display font-bold text-base text-slate-800 dark:text-slate-200">Anotasi Transkrip</h3>
+          </div>
+          <div class="flex items-center gap-3 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> Kesalahan Tata Bahasa</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Kata Pengisi</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span> Jeda Panjang</span>
+          </div>
+        </div>
+        <div id="highlighted-transcript" class="text-sm text-slate-600 dark:text-slate-300 leading-[2] tracking-wide"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-center gap-4 pb-10">
+        <button id="try-again-btn" class="try-again-btn" onclick="resetToRecord()">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>Coba Lagi</span>
+        </button>
+        <button id="back-history-btn" class="try-again-btn hidden" onclick="switchView('history')">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Kembali ke Riwayat</span>
+        </button>
+        <button id="save-session-btn" class="save-session-btn" onclick="saveSession()">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Simpan Sesi</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VIEW: MY STATS                           -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="view-stats" class="hidden flex-1 px-8 py-10 overflow-y-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="dashboard-card">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="trending-up" class="w-5 h-5 text-emerald-500"></i>
+            <h3 class="font-display font-bold text-base text-slate-800">Kemajuan Saya</h3>
+          </div>
+          <div class="relative w-full h-[280px]">
+            <canvas id="progress-chart"></canvas>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+            <h3 class="font-display font-bold text-base text-slate-800">Skor Terbaik</h3>
+          </div>
+          <div id="best-scores" class="space-y-3">
+            <p class="text-sm text-slate-400 italic">Selesaikan satu sesi untuk melihat skor terbaik Anda.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VIEW: SESSION HISTORY                    -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="view-history" class="hidden flex-1 px-8 py-10 overflow-y-auto">
+      <div id="history-list" class="space-y-4">
+        <p class="text-sm text-slate-400 italic">Belum ada sesi yang direkam. Mulai berlatih!</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-around py-3.5 px-4 z-40 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] transition-colors duration-300">
+    <button id="mobile-nav-practice" class="flex flex-col items-center gap-1.5 text-emerald-600 dark:text-emerald-500 font-bold text-[10px]" onclick="switchView('practice')">
+      <i data-lucide="swords" class="w-[20px] h-[20px]"></i>
+      <span>Arena</span>
+    </button>
+    <button id="mobile-nav-stats" class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 font-medium text-[10px]" onclick="switchView('stats')">
+      <i data-lucide="bar-chart-3" class="w-[20px] h-[20px]"></i>
+      <span>Statistik</span>
+    </button>
+    <button id="mobile-nav-history" class="flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 font-medium text-[10px]" onclick="switchView('history')">
+      <i data-lucide="history" class="w-[20px] h-[20px]"></i>
+      <span>Riwayat</span>
+    </button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- TOAST NOTIFICATION                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="toast" class="toast">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+    <span id="toast-text">Tindakan selesai</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
