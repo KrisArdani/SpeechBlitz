@@ -99,6 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSessionHistory();
   initTopicCache();
   initDB().catch(console.error);
+
+
 });
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -477,6 +479,19 @@ function switchView(view) {
     document.getElementById('view-practice')?.classList.toggle('hidden', view !== 'practice');
     document.getElementById('view-dashboard')?.classList.toggle('hidden', view !== 'dashboard');
     document.getElementById('nav-practice')?.classList.add('active');
+
+    // Dynamic welcome section handling
+    if (view === 'practice') {
+      const topicCard = document.getElementById('topic-card');
+      const welcomeSection = document.getElementById('welcome-section');
+      if (topicCard && welcomeSection) {
+        if (topicCard.classList.contains('hidden')) {
+          welcomeSection.classList.remove('hidden');
+        } else {
+          welcomeSection.classList.add('hidden');
+        }
+      }
+    }
   } else {
     document.getElementById(`view-${view}`)?.classList.remove('hidden');
     document.getElementById(`nav-${view}`)?.classList.add('active');
@@ -565,6 +580,13 @@ topicBtn.addEventListener('click', async () => {
 
 function displayTopic(topic) {
   topicText.textContent = topic;
+  
+  // Hide welcome section when topic is displayed
+  const welcomeSection = document.getElementById('welcome-section');
+  if (welcomeSection) {
+    welcomeSection.classList.add('hidden');
+  }
+
   topicCard.classList.remove('hidden');
   topicCard.style.animation = 'none';
   topicCard.offsetHeight; // trigger reflow
@@ -572,17 +594,27 @@ function displayTopic(topic) {
 
   // Enable microphone
   if (micBtn) {
-    micBtn.removeAttribute('disabled');
     micBtn.classList.remove('disabled');
   }
   if (recStatus) {
     recStatus.textContent = 'Ketuk mikrofon untuk memulai';
     recStatus.classList.remove('text-amber-600', 'dark:text-amber-500');
     recStatus.classList.add('text-slate-400');
+    
+    const recStatusSub = document.getElementById('rec-status-sub');
+    if (recStatusSub) {
+      recStatusSub.textContent = 'Ayo taklukkan tantangan ini! Ketuk tombol mikrofon hijau dan mulailah berbicara sekarang.';
+    }
   }
 }
 
 function displayLoadingTopic() {
+  // Hide welcome section when topic starts loading
+  const welcomeSection = document.getElementById('welcome-section');
+  if (welcomeSection) {
+    welcomeSection.classList.add('hidden');
+  }
+
   topicText.innerHTML = `<span class="flex items-center gap-2 text-slate-400 italic font-normal">
     <span class="animate-spin inline-block w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full"></span>
     Membuka tandon AI, mencari topik premium...
@@ -869,6 +901,31 @@ function initProgressChart() {
 
 // ─── Microphone Button Handler ──────────────────────────────────────────────
 micBtn.addEventListener('click', () => {
+  // If mic is in disabled/standby state, scroll to top and guide user
+  if (micBtn.classList.contains('disabled')) {
+    SFX.click();
+
+    // Scroll smoothly to the top selection area
+    const header = document.querySelector('header');
+    if (header) {
+      header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Highlight the "Topik Acak" button after a short delay for the scroll
+    setTimeout(() => {
+      const topicBtnEl = document.getElementById('topic-btn');
+      if (topicBtnEl) {
+        topicBtnEl.classList.add('scale-110', 'ring-4', 'ring-emerald-500/50');
+        showToast('💡 Pilih kategori lalu ketuk "Topik Acak" untuk memulai!');
+        setTimeout(() => {
+          topicBtnEl.classList.remove('scale-110', 'ring-4', 'ring-emerald-500/50');
+        }, 2000);
+      }
+    }, 400);
+
+    return; // Don't proceed to recording
+  }
+
   if (isRecording) {
     stopRecording();
   } else {
@@ -922,6 +979,11 @@ async function startRecording() {
     recStatus.textContent = 'Merekam... Ketuk untuk berhenti';
     recStatus.classList.remove('text-slate-400');
     recStatus.classList.add('text-rose-500');
+
+    const recStatusSub = document.getElementById('rec-status-sub');
+    if (recStatusSub) {
+      recStatusSub.textContent = 'Bernapas dengan tenang, artikulasikan setiap ide Anda secara terstruktur dan percaya diri!';
+    }
     recTimer.classList.remove('opacity-0');
     recTimer.classList.add('text-rose-500');
     recTimer.classList.remove('text-emerald-600');
@@ -984,6 +1046,11 @@ function stopRecording() {
   recStatus.textContent = 'Memproses suara Anda...';
   recStatus.classList.remove('text-rose-500');
   recStatus.classList.add('text-emerald-600');
+
+  const recStatusSub = document.getElementById('rec-status-sub');
+  if (recStatusSub) {
+    recStatusSub.textContent = 'Kecerdasan Buatan kami sedang menganalisis intonasi, kecepatan bicara, tata bahasa, dan jeda Anda...';
+  }
   SFX.recordStop();
 }
 
@@ -1753,6 +1820,11 @@ function resetToRecord() {
   recStatus.textContent = 'Ketuk mikrofon untuk memulai';
   recStatus.classList.remove('text-emerald-600', 'text-rose-500');
   recStatus.classList.add('text-slate-400');
+
+  const recStatusSub = document.getElementById('rec-status-sub');
+  if (recStatusSub) {
+    recStatusSub.textContent = 'Ayo taklukkan tantangan ini! Ketuk tombol mikrofon hijau dan mulailah berbicara sekarang.';
+  }
   recTimer.textContent = '00:00';
   recTimer.classList.add('opacity-0');
   recTimer.classList.remove('text-rose-500');

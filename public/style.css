@@ -138,23 +138,73 @@ body {
 }
 
 .mic-btn.disabled, .mic-btn:disabled {
-  background: linear-gradient(145deg, #94a3b8, #64748b) !important;
-  box-shadow: 0 8px 32px rgba(100, 116, 139, 0.2) !important;
-  cursor: not-allowed;
-  opacity: 0.65;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.3)) !important;
+  border: 2px dashed rgba(16, 185, 129, 0.22) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 
+    0 8px 32px rgba(16, 185, 129, 0.04),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+  cursor: pointer; /* Pointer even when disabled to show interactive hover wrapper */
+  opacity: 0.9;
+  animation: standbyBreathe 4s ease-in-out infinite;
+}
+
+.dark .mic-btn.disabled, .dark .mic-btn:disabled {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.35)) !important;
+  border-color: rgba(52, 211, 153, 0.2) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05) !important;
 }
 
 .mic-btn.disabled:hover, .mic-btn:disabled:hover {
-  transform: none !important;
-  box-shadow: 0 8px 32px rgba(100, 116, 139, 0.2) !important;
+  transform: scale(1.04) !important; /* Elegant grow on hover, inviting selection */
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 
+    0 12px 36px rgba(16, 185, 129, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+}
+
+.dark .mic-btn.disabled:hover, .dark .mic-btn:disabled:hover {
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  box-shadow: 
+    0 12px 36px rgba(52, 211, 153, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05) !important;
+}
+
+.mic-btn:disabled #mic-icon {
+  color: #10b981 !important;
+  animation: iconPulseStandby 4s ease-in-out infinite;
+}
+
+.dark .mic-btn:disabled #mic-icon {
+  color: #34d399 !important;
+}
+
+@keyframes standbyBreathe {
+  0%, 100% {
+    transform: scale(1);
+    border-color: rgba(16, 185, 129, 0.22) !important;
+  }
+  50% {
+    transform: scale(1.03);
+    border-color: rgba(16, 185, 129, 0.45) !important;
+  }
+}
+
+@keyframes iconPulseStandby {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.08); }
 }
 
 .mic-btn.recording {
-  background: linear-gradient(145deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #0d9488, #0f766e) !important;
   box-shadow:
-    0 8px 32px rgba(239, 68, 68, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-  animation: micPulse 1.8s ease-in-out infinite;
+    0 12px 48px rgba(13, 148, 136, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  animation: micBreathe 2s ease-in-out infinite;
 }
 
 /* ─── Pulse Rings ──────────────────────────────────────────────── */
@@ -946,4 +996,190 @@ body.recording-active .pulse-ring.delay-1000 {
 
 .word-highlight-base {
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ─── Onboarding / Welcome Hero Animations ──────────────────── */
+.welcome-hero-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUpWelcome 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-card-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUpWelcome 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-card-animate:nth-child(1) {
+  animation-delay: 0.15s;
+}
+
+.step-card-animate:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.step-card-animate:nth-child(3) {
+  animation-delay: 0.45s;
+}
+
+@keyframes fadeInUpWelcome {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card hover glow & icon floating micro-animations */
+.welcome-step-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.welcome-step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.dark .welcome-step-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  border-color: rgba(52, 211, 153, 0.25);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.welcome-step-card:hover .step-icon-container {
+  transform: scale(1.12) rotate(3deg);
+}
+
+.step-icon-container {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Premium Mic Button Animations & Glowing Aura ──────────── */
+#mic-aura {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#mic-halo {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: rotateHalo 12s linear infinite;
+}
+
+@keyframes rotateHalo {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Breathing animation for button in ready/enabled state */
+.mic-btn:not(.disabled):not(.recording) {
+  animation: micBreathe 2.5s ease-in-out infinite;
+}
+
+.mic-btn:not(.disabled):not(.recording) ~ #mic-aura {
+  background-color: rgba(16, 185, 129, 0.22) !important;
+  transform: scale(1.1);
+  filter: blur(28px);
+}
+
+.dark .mic-btn:not(.disabled):not(.recording) ~ #mic-aura {
+  background-color: rgba(52, 211, 153, 0.15) !important;
+}
+
+.mic-btn:not(.disabled):not(.recording) ~ #mic-halo {
+  opacity: 0.55;
+}
+
+/* Inactive standby state halo and aura */
+.mic-btn.disabled ~ #mic-aura {
+  background-color: rgba(16, 185, 129, 0.03) !important;
+  transform: scale(0.95);
+  filter: blur(20px);
+}
+
+.mic-btn.disabled ~ #mic-halo {
+  opacity: 0.12;
+  background: linear-gradient(to right, #cbd5e1, #e2e8f0);
+  animation: rotateHalo 24s linear infinite; /* Very slow sleep-rotation */
+}
+
+/* Inactive standby state hover reactions */
+.mic-btn.disabled:hover ~ #mic-aura {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  transform: scale(1.08);
+  filter: blur(24px);
+}
+
+.mic-btn.disabled:hover ~ #mic-halo {
+  opacity: 0.3;
+  background: linear-gradient(to right, #10b981, #34d399);
+  animation: rotateHalo 8s linear infinite; /* Speeds up on hover! */
+}
+
+/* Pulse / Soundwave aura animation for button & background in recording state */
+body.recording-active #mic-aura {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(236, 72, 153, 0.15) 60%, transparent 100%) !important;
+  transform: scale(1.35);
+  filter: blur(28px);
+  animation: auraPulseRecording 1.4s ease-in-out infinite alternate;
+}
+
+body.recording-active #mic-halo {
+  opacity: 0.85;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899, #3b82f6, #06b6d4); /* Siri-like Cyan-Blue-Purple-Pink gradient */
+  background-size: 200% 200%;
+  animation: rotateHalo 6s linear infinite, glowShift 3s ease infinite alternate; /* Faster rotation + shifting gradient colors */
+}
+
+@keyframes glowShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes auraPulseRecording {
+  0% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1.45); opacity: 0.9; }
+}
+
+@keyframes micBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.35);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 12px 48px rgba(16, 185, 129, 0.55);
+  }
+}
+
+@keyframes auraPulse {
+  0%, 100% { transform: scale(1.15); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* ─── Premium Spotlight & Float Focus Animations ────────────── */
+#mic-spotlight {
+  transition: all 0.8s ease-in-out;
+  animation: spotlightPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes spotlightPulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  100% { transform: scale(1.08); opacity: 1.2; }
+}
+
+/* Float animation for the entire wrapper to naturally attract human eye */
+#mic-btn-wrapper {
+  animation: micFloat 5s ease-in-out infinite;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes micFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+
+/* Lock/Disable float movement when recording to keep UI steady */
+body.recording-active #mic-btn-wrapper {
+  animation: none !important;
+  transform: translateY(0px) !important;
 }

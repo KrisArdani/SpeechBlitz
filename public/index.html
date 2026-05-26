@@ -145,11 +145,11 @@
           <i data-lucide="moon" id="moon-icon" class="w-[18px] h-[18px]"></i>
         </button>
 
-        <!-- Theme Selector -->
+        <!-- Category Selector -->
         <div class="relative group custom-dropdown-container" data-select-id="topic-theme" data-color="emerald">
           <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
           <select id="topic-theme" class="hidden">
-            <option value="Semua">Semua Tema</option>
+            <option value="Semua">Semua Kategori</option>
             <option value="Teknologi">Teknologi</option>
             <option value="Pendidikan">Pendidikan</option>
             <option value="Sosial">Sosial & Budaya</option>
@@ -161,7 +161,7 @@
             <option value="Seni">Seni & Pop Culture</option>
           </select>
           <button type="button" class="custom-dropdown-trigger relative flex items-center justify-between min-w-[140px] bg-white/80 backdrop-blur-md border border-emerald-200/60 text-slate-700 text-[13px] font-semibold py-2.5 pl-4 pr-3.5 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-sm hover:shadow-md transition-all">
-            <span class="custom-dropdown-text pointer-events-none">Semua Tema</span>
+            <span class="custom-dropdown-text pointer-events-none">Semua Kategori</span>
             <i data-lucide="chevron-down" class="w-4 h-4 text-emerald-600 group-hover:text-emerald-700 transition-colors pointer-events-none ml-2"></i>
           </button>
           <div class="custom-dropdown-menu absolute z-50 left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-emerald-100 rounded-2xl shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
@@ -205,6 +205,76 @@
     <!-- ════════════════════════════════════════ -->
     <section id="view-practice" class="flex-1 flex flex-col items-center justify-center px-8 py-10 transition-all duration-500">
 
+      <!-- Welcome Hero Section -->
+      <div id="welcome-section" class="w-full max-w-3xl mb-8 text-center welcome-hero-enter">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-5 shadow-sm">
+          <i data-lucide="mic" class="w-3.5 h-3.5 animate-pulse text-emerald-500"></i>
+          <span>Asisten AI Public Speaking Latihan Anda</span>
+        </div>
+        
+        <!-- Heading -->
+        <h2 class="font-display font-extrabold text-2xl md:text-4xl text-slate-800 dark:text-slate-100 tracking-tight leading-tight mb-4">
+          Tingkatkan Percaya Diri & Teknik Berbicara dengan <span class="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">Analisis AI Instan</span>
+        </h2>
+        
+        <!-- Description -->
+        <p class="text-sm md:text-base text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10">
+          Selamat datang di <span class="font-semibold text-emerald-600 dark:text-emerald-400">SpeechBlitz</span>! Platform interaktif berbasis AI yang menganalisis ucapan Anda secara real-time. Dapatkan umpan balik instan mengenai kelancaran, tata bahasa, penggunaan kata pengisi (filler words), keheningan jeda, hingga nada bicara dari pelatih pilihan Anda.
+        </p>
+
+        <!-- Steps Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <!-- Step 1 -->
+          <div class="welcome-step-card step-card-animate bg-white/80 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+            <div class="step-icon-container w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/40 flex items-center justify-center text-amber-500 mb-3.5 transition-transform group-hover:scale-110">
+              <i data-lucide="sparkles" class="w-5 h-5"></i>
+            </div>
+            <h4 class="font-display font-bold text-sm text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+              <span class="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-md">1</span>
+              Pilih Kategori & Topik
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Tentukan kategori di atas, lalu tekan <span class="font-semibold text-emerald-600 dark:text-emerald-400">"Topik Acak"</span> untuk memicu tantangan topik instan dari sistem AI kami.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="welcome-step-card step-card-animate bg-white/80 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+            <div class="step-icon-container w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/40 flex items-center justify-center text-emerald-600 mb-3.5 transition-transform group-hover:scale-110">
+              <i data-lucide="play" class="w-5 h-5 ml-0.5"></i>
+            </div>
+            <h4 class="font-display font-bold text-sm text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+              <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">2</span>
+              Mulai Berbicara
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Aktifkan mikrofon di bawah dan mulailah berbicara secara alami. Asisten AI akan memantau kecepatan vokal dan struktur transkrip secara langsung.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="welcome-step-card step-card-animate bg-white/80 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 group">
+            <div class="step-icon-container w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200/40 flex items-center justify-center text-blue-500 mb-3.5 transition-transform group-hover:scale-110">
+              <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+            </div>
+            <h4 class="font-display font-bold text-sm text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
+              <span class="text-[10px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 rounded-md">3</span>
+              Analisis Skor & Umpan Balik
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Setelah selesai, pelatih AI pilihan Anda (Profesional, Tukang Roasting, atau Terapis) akan menyajikan radar performa dan tips evaluasi terperinci!
+            </p>
+          </div>
+        </div>
+
+        <!-- Spotlight Chevron Pointer -->
+        <div class="mt-10 flex flex-col items-center gap-1.5 text-slate-400 dark:text-slate-500 animate-bounce pointer-events-none">
+          <span class="text-[9px] font-bold uppercase tracking-widest">Ketuk Mikrofon di Bawah untuk Memulai</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-emerald-500 animate-pulse"></i>
+        </div>
+      </div>
+
       <!-- Topic Display -->
       <div id="topic-card" class="topic-card hidden">
         <div class="flex items-center gap-2 mb-1">
@@ -215,22 +285,32 @@
       </div>
 
       <!-- Microphone Button -->
-      <div class="relative mt-6 mb-8">
-        <!-- Pulse rings -->
-        <div id="pulse-ring-1" class="pulse-ring"></div>
-        <div id="pulse-ring-2" class="pulse-ring delay-500"></div>
-        <div id="pulse-ring-3" class="pulse-ring delay-1000"></div>
+      <div id="mic-btn-wrapper" class="relative mt-8 mb-10 flex flex-col items-center justify-center cursor-pointer">
+        <!-- Spotlight Background Glow -->
+        <div id="mic-spotlight" class="absolute w-[360px] h-[360px] rounded-full bg-emerald-500/[0.04] dark:bg-emerald-500/[0.02] blur-3xl -z-20 pointer-events-none"></div>
 
-        <button id="mic-btn" class="mic-btn disabled" disabled aria-label="Start or stop recording">
+        <!-- Premium Aura backdrop -->
+        <div id="mic-aura" class="absolute w-36 h-36 rounded-full bg-slate-300/20 dark:bg-slate-700/10 blur-xl -z-10 transition-all duration-700 pointer-events-none"></div>
+        
+        <!-- Rotating gradient halo ring -->
+        <div id="mic-halo" class="absolute -inset-3.5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 opacity-0 blur-sm -z-10 transition-all duration-700 pointer-events-none"></div>
+
+        <button id="mic-btn" class="mic-btn disabled" aria-label="Start or stop recording">
           <i data-lucide="mic" id="mic-icon" class="w-10 h-10 text-white transition-transform duration-300"></i>
           <i data-lucide="square" id="stop-icon" class="w-8 h-8 text-white hidden transition-transform duration-300"></i>
         </button>
+
+        <!-- Pulse rings for recording state -->
+        <div id="pulse-ring-1" class="pulse-ring pointer-events-none"></div>
+        <div id="pulse-ring-2" class="pulse-ring delay-500 pointer-events-none"></div>
+        <div id="pulse-ring-3" class="pulse-ring delay-1000 pointer-events-none"></div>
       </div>
 
       <!-- Status Text -->
       <div class="text-center mb-6">
-        <p id="rec-status" class="text-sm font-medium text-amber-600 dark:text-amber-500 transition-all duration-300">💡 Pilih "Topik Acak" di atas terlebih dahulu</p>
-        <p id="rec-timer" class="font-display text-3xl font-bold text-emerald-600 mt-1 opacity-0 transition-all duration-500">00:00</p>
+        <p id="rec-status" class="text-sm font-medium text-amber-600 dark:text-amber-500 transition-all duration-300">💡 Pilih "Topik Acak" di atas terlebih dahulu untuk memulai tantangan berbicara sekarang!</p>
+        <p id="rec-status-sub" class="text-xs text-slate-400 dark:text-slate-500 mt-1.5 transition-all duration-300 max-w-md mx-auto leading-relaxed">Setiap sesi latihan membawa Anda selangkah lebih dekat menjadi komunikator ulung!</p>
+        <p id="rec-timer" class="font-display text-3xl font-bold text-emerald-600 mt-2 opacity-0 transition-all duration-500">00:00</p>
       </div>
 
       <!-- Live Stats Chips -->
