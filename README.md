@@ -10,6 +10,14 @@ SpeechBlitz adalah aplikasi full-stack (Web & API) interaktif yang dirancang unt
 
 ---
 
+## 🎥 Demo Video
+
+Berikut adalah rekaman demonstrasi fitur dan alur kerja aplikasi SpeechBlitz:
+
+[![Tonton Demo SpeechBlitz](https://dms.licdn.com/playlist/vid/v2/D5605AQH7qGoNabG6fA/thumbnail-with-play-button-overlay-high/B56Z50fRrYHAC0-/0/1780070820616?e=2147483647&v=beta&t=RCyGJaDzo4OnbYsOvxRR-c-2bfstLIQThAM8F9qcltc)](https://www.linkedin.com/posts/kris-ardani-5a7758409_juaravibecoding-publicspeaking-geminiai-ugcPost-7466158008163536896-tN9K/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAGg6ck8B-IgU378pBLCdvwn5629pK0aptEs)
+
+---
+
 ## 🌟 Fitur Utama
 
 ### 1. AI Speech Analysis & Scoring
